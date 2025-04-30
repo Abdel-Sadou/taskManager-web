@@ -3,35 +3,38 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {useSession} from "next-auth/react";
-import {register} from "@/lib/authService";
+import {onSetToken, register} from "@/lib/authService";
+import {useStore} from "zustand/react";
+import AuthStore from "@/app/AuthStore";
 
 export default function useAuth(redirectTo: string = '/login') {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [isAuth, setIsAuth] = useState(false)
   const {data: session} = useSession();
+  const authStore = useStore(AuthStore);
+
+
 
   useEffect(() => {
-
-    const token = localStorage.getItem('access_token')
-    if(session){
-        if (!token){
-            const idToken = session.id_token; // Ceci est ton id_token de Google
-            console.warn("ID Token:", idToken);
-            console.info("session", session);
-            localStorage.setItem("user", JSON.stringify({username : session.user?.name, id : session.user?.email}) );
-            localStorage.setItem("access_token", idToken as string);
+      console.log("session", session==undefined);
+      console.log("authStore.token", authStore.token)
+    if(session!=undefined){
+        if (authStore.token==null){
             register({id:null , username:session.user?.name as string, email :session.user?.email as string , enabled: true, role: "USER", tasks:[]})
-                .then((result) => {
-                    console.info(result)
+                .then((idUser) => {
+                    authStore.setUser({username : session.user?.name as string, id : Number(idUser)})
+                    authStore.setToken(session.id_token!)
+                    console.info("***************USER SAVED", {username : session.user?.name as string, id : Number(idUser)})
                 })
                 .catch((err) => {
                     console.error(err)})
         }
 
         setIsAuth(true)
-    }else if (!token) {
-      router.push(redirectTo)
+    }else if (authStore.token==null) {
+        console.log("*********************suis là *****************************************")
+       router.push(redirectTo)
     } else {
       setIsAuth(true)
     }

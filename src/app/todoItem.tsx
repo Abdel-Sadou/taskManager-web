@@ -2,12 +2,14 @@
 'use client';
 import {Task} from "@/model/model";
 import { useState} from "react";
+import {useStore} from "zustand/react";
+import {todoStore} from "@/app/todoStore";
 
-export default function TodoItem (props: { addTodo :(todo: Task)=>void}){
+export default function TodoItem (props: { addTodo :()=>void}){
 
-    const  [todo, setTodo] = useState<Task>({completed : false , title : '',description :'', id:null, user : {id:0}})
+   // const  [todo, setTodo] = useState<Task>({completed : false , title : '',description :'', id:null, user : {id:0}})
 
-
+    const {todo, setTodo} = useStore(todoStore);
     return (
         <div className="flex gap-2 mb-4">
             <input
@@ -21,7 +23,7 @@ export default function TodoItem (props: { addTodo :(todo: Task)=>void}){
                 className="border p-2 rounded"
                 placeholder="Ajouter une tâche"
             />
-            <button onClick={()=> props.addTodo(todo)} className="bg-blue-500 text-white px-4 py-2 rounded">Ajouter</button>
+            <button onClick={()=> props.addTodo()} className="bg-blue-500 text-white px-4 py-2 rounded">Ajouter</button>
         </div>
     );
 }

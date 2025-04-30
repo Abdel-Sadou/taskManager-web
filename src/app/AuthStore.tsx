@@ -6,7 +6,7 @@ import {persist} from "zustand/middleware";
 type AuthType = {
     user: User | null,
     token: string | null,
-    setToken: (token: string) => void
+    setToken: (token: string|null) => void
     setUser: (user: User|null ) => void,
 }
 /*const AuthStore = createStore<AuthType>(

@@ -2,26 +2,24 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {signOut} from "next-auth/react";
+import {useStore} from "zustand/react";
+import AuthStore from "@/app/AuthStore";
+import {onSetToken} from "@/lib/authService";
 
 
 
 export default function Header(){
     const router = useRouter();
-    const [username, setUsername] =useState("");
+    const authStore = useStore(AuthStore);
 
-    useEffect(() => {
-      const u =  localStorage.getItem("user") ;
-      if(u){
-          setUsername(JSON.parse(u).username);
-      }
-    },[])
+
     const deconnexion = ()=>{
         if(confirm("Déconnexion?")){
-            localStorage.removeItem("user");
-            localStorage.removeItem("access_token");
+            authStore.setUser(null);
+            authStore.setToken(null);
             router.push("/");
-            alert("Deconnexion réussie");
             signOut().then();
+            alert("Deconnexion réussie");
         }
 
     }
@@ -29,7 +27,7 @@ export default function Header(){
         <div>
             <header className="bg-gray-800 text-white px-6 py-4 shadow-md flex justify-between items-center">
                 <div className="text-xl font-semibold">
-                    Bonjour, <span className="text-blue-400">{username}</span>
+                    Bonjour, <span className="text-blue-400">{authStore.user?.username}</span>
                 </div>
                 {/* Tu peux ajouter des éléments à droite ici, comme un avatar, une icône de déconnexion, etc. */}
                 <div className="flex items-center gap-4">

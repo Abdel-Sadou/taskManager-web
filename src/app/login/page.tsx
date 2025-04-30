@@ -22,7 +22,7 @@ export default function  Login(){
     const authStore =useStore(AuthStore);
 
     useEffect(()=>{
-        const access_token = localStorage.getItem("access_token");
+        const access_token = localStorage.getItem("authStorage");
         if (access_token){
             router.push("/")
         }

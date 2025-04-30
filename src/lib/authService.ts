@@ -27,7 +27,7 @@ export const decodeToken = (token: string) => {
     }
 }
 export  default function getAuthHeader() {
-    const token = AuthStore(state => state.token)
+    const token = AuthStore.getState().token
     console.warn("TOKEN**************************** ", token)
     if (token) {
         return {

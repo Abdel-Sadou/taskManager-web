@@ -10,19 +10,24 @@ import ProtectedPage from "@/app/protectedPage";
 import {useStore} from "zustand/react";
 import AuthStore from "@/app/AuthStore";
 import {SessionProvider} from "next-auth/react";
+import {todoStore} from "@/app/todoStore";
 
 
 export default function Home() {
     const [todos, setTodos] = useState<Task[]>([]);
     const auhtStore = useStore(AuthStore);
+    const {todo, setTodo} = useStore(todoStore)
 
-    const addTodo = (todo: Task) => {
+    const addTodo = () => {
         todo.user.id = auhtStore?.user?.id as number;
-        if (todo) {
+        if (todo.title && todo.description ) {
             createTodo(todo).then(value => {
                 console.log(value)
                 alert(value)
+
                 getTodo()
+
+
             }).catch(error => {
                 console.log("create todo error ", error)
             })
@@ -32,10 +37,10 @@ export default function Home() {
     }
      const  getTodo = useCallback(  ()=>{
          if ( auhtStore?.user){
-             console.log("getTodo auhtStore  ////////////////",auhtStore?.user?.id)
              getTodoByUser( auhtStore?.user?.id as number).then(value => {
                  console.log(value)
                  if (value) setTodos(value)
+                 setTodo({completed : false , title : '',description :'', id:null, user : {id:0}})
              }).catch(error => {
                  console.log("get todo error ", error)
              })
