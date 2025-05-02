@@ -21,7 +21,6 @@ const handler = NextAuth({
         },
         async redirect({ url, baseUrl }) {
             // Si l'utilisateur se connecte avec succès, rediriger vers la page d'accueil ou une page spécifique
-            console.warn("I am redirect ", url)
             return baseUrl; // rediriger vers la page principale
         },
     },

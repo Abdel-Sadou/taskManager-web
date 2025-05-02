@@ -7,7 +7,7 @@ import {useRouter} from "next/navigation";
 import {useStore} from "zustand/react";
 import AuthStore from "@/app/AuthStore";
 import Image from "next/image";
-import {getSession, signIn} from "next-auth/react";
+import {getSession, signIn, useSession} from "next-auth/react";
 
 
 
@@ -22,10 +22,10 @@ export default function  Login(){
     const authStore =useStore(AuthStore);
 
     useEffect(()=>{
-        const access_token = localStorage.getItem("authStorage");
-        if (access_token){
-            router.push("/")
-        }
+            /*const authStorage = localStorage.getItem("authStorage");
+            if (authStorage!=undefined){
+                router.push("/")
+            }*/
     })
 
     const handleLogin = (e:React.FormEvent) => {

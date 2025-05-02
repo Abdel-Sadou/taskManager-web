@@ -1,12 +1,14 @@
 "use client";
-import {PropsWithChildren} from "react";
+import {PropsWithChildren, useEffect} from "react";
 
 import useAuth from "@/app/useAuth";
 
 export  default function  ProtectedPage({children}:PropsWithChildren) {
 
     const {loading,isAuth}= useAuth()
-        
+      useEffect(()=>{
+          console.warn("isAuth ::::::", isAuth)
+      })
         
     if (loading) {
         return (
