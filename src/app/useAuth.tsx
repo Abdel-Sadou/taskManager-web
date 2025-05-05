@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {useSession} from "next-auth/react";
-import {onSetToken, register} from "@/lib/authService";
-import {useStore} from "zustand/react";
+import {auth, authGoogle, onSetToken, register} from "@/lib/authService";
 import AuthStore from "@/app/AuthStore";
 
 export default function useAuth(redirectTo: string = '/login') {
@@ -17,32 +16,33 @@ export default function useAuth(redirectTo: string = '/login') {
 
 
   useEffect(() => {
-      const authStore = typeof window !== "undefined" ? AuthStore.getState() : null;
-      console.log("session", session)
-    if(session){
-        authStore?.setToken(session.id_token!)
+      const authStore = AuthStore.getState();
+     if (authStore?.token==null) {
 
-        if (authStore?.token==null){
-            register({id:null , username:session.user?.name as string, email :session.user?.email as string , enabled: true, role: "USER", tasks:[]})
-                .then((idUser) => {
-                    console.info("***************USER SAVED", {username : session.user?.name as string, id : Number(idUser)})
-                    authStore?.setUser({username : session.user?.name as string, id : Number(idUser)})
-                    setIsAuth(true)
-                })
-                .catch((err) => {
-                    console.error(err)
-                    setIsAuth(false)
-                })
-        }
-        setIsAuth(true)
-        return;
-    }else if (authStore?.token==null) {
-        console.log("*********************suis là redirectTo*****************************************")
-       router.push(redirectTo)
+         if(session){
+             console.warn("{idToken :session.id_token!}", {idToken :session.id_token!})
+
+             authGoogle({idToken :session.id_token!}).then(async (response) => {
+                 authStore.setUser(onSetToken(response)??null)
+                 authStore.setToken(response.access_token)
+                 setIsAuth(true)
+                 router.push("/")
+                 setLoading(false)
+             }).
+             catch(err => {
+                 console.error(err)
+                 setLoading(false)
+             });
+         }else {
+             router.push(redirectTo)
+             setLoading(false)
+         }
+
     } else {
       setIsAuth(true)
+      setLoading(false)
     }
-    setLoading(false)
+
 
   }, [session, router, redirectTo])
 

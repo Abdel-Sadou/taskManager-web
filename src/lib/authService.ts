@@ -7,12 +7,7 @@ import AuthStore from "@/app/AuthStore";
 const BASE_URL = "http://localhost:8080";
 
 export const  onSetToken = (response: TokenM) :User |undefined=>{
-
-    localStorage.setItem("access_token", response.access_token);
     const resultToken = decodeToken(response.access_token)
-    if (resultToken){
-        localStorage.setItem("user", JSON.stringify({username : resultToken.user?.username, id : resultToken.user?.id}) );
-    }
     return resultToken?.user;
     /*
          localStorage.setItem("access_generate_at", JSON.stringify(response.access_generate_at));
@@ -44,6 +39,20 @@ export async function auth({username, password}:{ username: string; password: st
             "Content-Type": "application/json", // ← c’est ça qui est important
         },
         body: JSON.stringify({username, password}),
+    });
+
+    if (!res.ok) throw new Error("Une erreur s'est produite !!!!");
+    return res.json();
+
+}
+
+export async function authGoogle({idToken}:{ idToken: string}): Promise<TokenM> {
+    const res = await fetch("http://localhost:8080/auth/google", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json", // ← c’est ça qui est important
+        },
+        body: JSON.stringify({idToken}),
     });
 
     if (!res.ok) throw new Error("Une erreur s'est produite !!!!");

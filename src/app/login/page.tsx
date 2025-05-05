@@ -32,21 +32,18 @@ export default function  Login(){
             e.preventDefault()
         if (!isGoogle){
             console.warn({username, password})
-            auth({username, password}).then(async (response) => {
-                authStore.setUser(onSetToken(response)??null)
-                authStore.setToken(response.access_token)
-                // tokenContext?.setAccessToken(response.access_token)
-                console.warn(" authStore?.user ////////////////", authStore.user)
-                router.push("/")
-                console.info("login success", response);
+                auth({username, password}).then(async (response) => {
+                    authStore.setUser(onSetToken(response)??null)
+                    authStore.setToken(response.access_token)
+                    router.push("/")
 
-            }).
-            catch(err => {
-                console.error(err)
-            });
+                }).
+                catch(err => {
+                    console.error(err)
+                });
         }else {
             signIn("google").then(async (response) => {
-                console.log("response google", response);
+
             }).catch(err=>{
                 console.log(err)
             })
